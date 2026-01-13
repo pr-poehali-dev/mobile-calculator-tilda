@@ -1,73 +1,107 @@
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Icon from '@/components/ui/icon';
-import BasicCalculator from '@/components/calculators/BasicCalculator';
-import PercentCalculator from '@/components/calculators/PercentCalculator';
-import CurrencyConverter from '@/components/calculators/CurrencyConverter';
+import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState('basic');
+  const [amount, setAmount] = useState(100000);
+  const [months, setMonths] = useState(12);
+  const interestRate = 0.18;
+
+  const calculateMonthlyPayment = () => {
+    const monthlyRate = interestRate / 12;
+    const payment = amount * (monthlyRate * Math.pow(1 + monthlyRate, months)) / 
+                    (Math.pow(1 + monthlyRate, months) - 1);
+    return payment;
+  };
+
+  const getEndDate = () => {
+    const date = new Date();
+    date.setMonth(date.getMonth() + months);
+    return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+  };
+
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat('ru-RU').format(Math.round(num));
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#667eea] to-[#764ba2] py-8 px-4">
-      <div className="container max-w-2xl mx-auto animate-fade-in">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-3">
-            Калькулятор
-          </h1>
-          <p className="text-white/90 text-lg">
-            Многофункциональный калькулятор для всех случаев
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center p-4">
+      <Card className="w-full max-w-2xl bg-gradient-to-br from-[#FFB84D] to-[#F5A623] p-8 md:p-12 rounded-[2.5rem] shadow-2xl border-none">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 md:mb-12">
+          Выберите сумму и срок
+        </h1>
+
+        <div className="space-y-8 md:space-y-12">
+          <div className="space-y-4">
+            <div className="flex justify-between items-baseline">
+              <span className="text-2xl md:text-3xl font-semibold text-gray-900">Сумма</span>
+              <span className="text-3xl md:text-4xl font-bold text-gray-900">
+                {formatNumber(amount)} ₽
+              </span>
+            </div>
+            
+            <Slider
+              value={[amount]}
+              onValueChange={(value) => setAmount(value[0])}
+              min={1000}
+              max={100000}
+              step={1000}
+              className="py-4"
+            />
+            
+            <div className="flex justify-between text-lg md:text-xl text-gray-700 opacity-75">
+              <span>1 000 ₽</span>
+              <span>50 000 ₽</span>
+              <span>100 000 ₽</span>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex justify-between items-baseline">
+              <span className="text-2xl md:text-3xl font-semibold text-gray-900">Срок</span>
+              <span className="text-3xl md:text-4xl font-bold text-gray-900">
+                {months} {months === 1 ? 'месяц' : months < 5 ? 'месяца' : 'месяцев'}
+              </span>
+            </div>
+            
+            <Slider
+              value={[months]}
+              onValueChange={(value) => setMonths(value[0])}
+              min={1}
+              max={12}
+              step={1}
+              className="py-4"
+            />
+            
+            <div className="flex justify-between text-lg md:text-xl text-gray-700 opacity-75">
+              <span>1 месяц</span>
+              <span>12 месяцев</span>
+            </div>
+          </div>
+
+          <div className="space-y-3 text-lg md:text-xl text-gray-800 pt-4">
+            <div className="flex justify-between items-center">
+              <span className="opacity-75">Вы берете:</span>
+              <span className="font-bold">{formatNumber(amount)} ₽</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="opacity-75">До (включительно):</span>
+              <span className="font-bold">{getEndDate()}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="opacity-75">Ежемесячный платеж:</span>
+              <span className="font-bold">{formatNumber(calculateMonthlyPayment())} ₽</span>
+            </div>
+          </div>
+
+          <Button 
+            className="w-full h-16 md:h-20 text-2xl md:text-3xl font-bold bg-[#6B46C1] hover:bg-[#5A3BA8] text-white rounded-3xl shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+          >
+            Получить займ
+          </Button>
         </div>
-
-        <Card className="p-6 shadow-2xl rounded-3xl backdrop-blur-sm bg-white/95 animate-scale-in">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-3 mb-6 bg-muted/50 p-1 rounded-2xl">
-              <TabsTrigger 
-                value="basic" 
-                className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-md transition-all"
-              >
-                <Icon name="Calculator" size={18} className="mr-2" />
-                <span className="hidden sm:inline">Калькулятор</span>
-                <span className="sm:hidden">Калк.</span>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="percent"
-                className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-md transition-all"
-              >
-                <Icon name="Percent" size={18} className="mr-2" />
-                <span className="hidden sm:inline">Проценты</span>
-                <span className="sm:hidden">%</span>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="currency"
-                className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-md transition-all"
-              >
-                <Icon name="Coins" size={18} className="mr-2" />
-                <span className="hidden sm:inline">Валюты</span>
-                <span className="sm:hidden">₽$€</span>
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="basic" className="mt-0">
-              <BasicCalculator />
-            </TabsContent>
-
-            <TabsContent value="percent" className="mt-0">
-              <PercentCalculator />
-            </TabsContent>
-
-            <TabsContent value="currency" className="mt-0">
-              <CurrencyConverter />
-            </TabsContent>
-          </Tabs>
-        </Card>
-
-        <div className="mt-6 text-center text-white/80 text-sm">
-          <p>© 2026 Калькулятор · Сделано с ❤️</p>
-        </div>
-      </div>
+      </Card>
     </div>
   );
 };
