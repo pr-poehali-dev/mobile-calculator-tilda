@@ -1,0 +1,331 @@
+<!-- КАЛЬКУЛЯТОР ЗАЙМА - КОД ДЛЯ ВСТАВКИ В TILDA -->
+<!-- 
+  ИНСТРУКЦИЯ ПО УСТАНОВКЕ:
+  1. В редакторе Tilda добавьте блок T123 "HTML-код"
+  2. Скопируйте весь код ниже и вставьте в блок
+  3. Сохраните и опубликуйте страницу
+  4. Калькулятор автоматически адаптируется под мобильные устройства
+-->
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  #loan-calculator {
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  
+  .loan-card {
+    background: linear-gradient(135deg, #FFB84D 0%, #F5A623 100%);
+    border-radius: 32px;
+    padding: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  
+  .loan-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 24px;
+    line-height: 1.3;
+  }
+  
+  .loan-section {
+    margin-bottom: 32px;
+  }
+  
+  .loan-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+    gap: 8px;
+  }
+  
+  .loan-label {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+  
+  .loan-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+  
+  .slider-container {
+    position: relative;
+    padding: 16px 0;
+  }
+  
+  .slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 8px;
+    background: rgba(107, 70, 193, 0.3);
+    outline: none;
+    cursor: pointer;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #6B46C1;
+    border: 4px solid white;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: transform 0.15s ease;
+  }
+  
+  .slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #6B46C1;
+    border: 4px solid white;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: transform 0.15s ease;
+  }
+  
+  .slider::-moz-range-thumb:hover {
+    transform: scale(1.1);
+  }
+  
+  .slider::-webkit-slider-runnable-track {
+    background: linear-gradient(to right, #6B46C1 var(--fill), rgba(107, 70, 193, 0.3) var(--fill));
+    height: 8px;
+    border-radius: 8px;
+  }
+  
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    color: rgba(26, 26, 26, 0.6);
+    margin-top: 8px;
+  }
+  
+  .loan-details {
+    border-top: 2px solid rgba(26, 26, 26, 0.1);
+    padding-top: 16px;
+    margin-top: 16px;
+  }
+  
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: rgba(26, 26, 26, 0.8);
+  }
+  
+  .detail-value {
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+  
+  .loan-button {
+    width: 100%;
+    padding: 18px 32px;
+    background: #6B46C1;
+    color: white;
+    border: none;
+    border-radius: 24px;
+    font-size: 22px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(107, 70, 193, 0.4);
+    transition: all 0.2s ease;
+    margin-top: 24px;
+    font-family: inherit;
+  }
+  
+  .loan-button:hover {
+    background: #5A3BA8;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(107, 70, 193, 0.5);
+  }
+  
+  .loan-button:active {
+    transform: scale(0.98);
+  }
+  
+  @media (max-width: 640px) {
+    .loan-card { padding: 20px; border-radius: 24px; }
+    .loan-title { font-size: 20px; margin-bottom: 20px; }
+    .loan-label { font-size: 18px; }
+    .loan-value { font-size: 24px; }
+    .slider-labels { font-size: 14px; }
+    .detail-row { font-size: 14px; }
+    .loan-button { font-size: 20px; padding: 16px; }
+    .slider-labels span:nth-child(2) { display: none; }
+  }
+</style>
+
+<div id="loan-calculator">
+  <div class="loan-card">
+    <h2 class="loan-title">Выберите сумму и срок</h2>
+    
+    <div class="loan-section">
+      <div class="loan-row">
+        <span class="loan-label">Сумма</span>
+        <span class="loan-value" id="amount-display">100 000 ₽</span>
+      </div>
+      <div class="slider-container">
+        <input 
+          type="range" 
+          class="slider" 
+          id="amount-slider" 
+          min="1000" 
+          max="100000" 
+          step="1000" 
+          value="100000"
+          style="--fill: 100%"
+        >
+      </div>
+      <div class="slider-labels">
+        <span>1 000 ₽</span>
+        <span>50 000 ₽</span>
+        <span>100 000 ₽</span>
+      </div>
+    </div>
+    
+    <div class="loan-section">
+      <div class="loan-row">
+        <span class="loan-label">Срок</span>
+        <span class="loan-value" id="months-display">12 месяцев</span>
+      </div>
+      <div class="slider-container">
+        <input 
+          type="range" 
+          class="slider" 
+          id="months-slider" 
+          min="1" 
+          max="12" 
+          step="1" 
+          value="12"
+          style="--fill: 100%"
+        >
+      </div>
+      <div class="slider-labels">
+        <span>1 месяц</span>
+        <span>12 месяцев</span>
+      </div>
+    </div>
+    
+    <div class="loan-details">
+      <div class="detail-row">
+        <span>Вы берете:</span>
+        <span class="detail-value" id="borrow-amount">100 000 ₽</span>
+      </div>
+      <div class="detail-row">
+        <span>До (включительно):</span>
+        <span class="detail-value" id="end-date">13 января 2027</span>
+      </div>
+      <div class="detail-row">
+        <span>Ежемесячный платеж:</span>
+        <span class="detail-value" id="monthly-payment">9 169 ₽</span>
+      </div>
+    </div>
+    
+    <button class="loan-button" onclick="handleLoanSubmit()">
+      Получить займ
+    </button>
+  </div>
+</div>
+
+<script>
+  const interestRate = 0.18;
+  
+  function formatNumber(num) {
+    return new Intl.NumberFormat('ru-RU').format(Math.round(num));
+  }
+  
+  function getMonthWord(n) {
+    if (n === 1) return 'месяц';
+    if (n >= 2 && n <= 4) return 'месяца';
+    return 'месяцев';
+  }
+  
+  function calculateMonthlyPayment(amount, months) {
+    const monthlyRate = interestRate / 12;
+    const payment = amount * (monthlyRate * Math.pow(1 + monthlyRate, months)) / 
+                    (Math.pow(1 + monthlyRate, months) - 1);
+    return payment;
+  }
+  
+  function getEndDate(months) {
+    const date = new Date();
+    date.setMonth(date.getMonth() + months);
+    return date.toLocaleDateString('ru-RU', { 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
+    });
+  }
+  
+  function updateSliderFill(slider) {
+    const value = parseInt(slider.value);
+    const min = parseInt(slider.min);
+    const max = parseInt(slider.max);
+    const percent = ((value - min) / (max - min)) * 100;
+    slider.style.setProperty('--fill', percent + '%');
+  }
+  
+  function updateCalculator() {
+    const amount = parseInt(document.getElementById('amount-slider').value);
+    const months = parseInt(document.getElementById('months-slider').value);
+    
+    document.getElementById('amount-display').textContent = formatNumber(amount) + ' ₽';
+    document.getElementById('months-display').textContent = months + ' ' + getMonthWord(months);
+    document.getElementById('borrow-amount').textContent = formatNumber(amount) + ' ₽';
+    document.getElementById('end-date').textContent = getEndDate(months);
+    document.getElementById('monthly-payment').textContent = formatNumber(calculateMonthlyPayment(amount, months)) + ' ₽';
+  }
+  
+  function handleLoanSubmit() {
+    const amount = parseInt(document.getElementById('amount-slider').value);
+    const months = parseInt(document.getElementById('months-slider').value);
+    
+    // ЗДЕСЬ ДОБАВЬТЕ СВОЮ ЛОГИКУ:
+    // - Переход на страницу заявки
+    // - Открытие формы
+    // - Отправка данных
+    
+    alert('Заявка на займ:\nСумма: ' + formatNumber(amount) + ' ₽\nСрок: ' + months + ' мес.');
+    
+    // Пример перехода на страницу заявки:
+    // window.location.href = '/application?amount=' + amount + '&months=' + months;
+  }
+  
+  const amountSlider = document.getElementById('amount-slider');
+  const monthsSlider = document.getElementById('months-slider');
+  
+  amountSlider.addEventListener('input', function() {
+    updateSliderFill(this);
+    updateCalculator();
+  });
+  
+  monthsSlider.addEventListener('input', function() {
+    updateSliderFill(this);
+    updateCalculator();
+  });
+  
+  updateSliderFill(amountSlider);
+  updateSliderFill(monthsSlider);
+  updateCalculator();
+</script>
