@@ -26,7 +26,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center p-3 sm:p-4">
+    <div className="min-h-screen bg-white flex items-center justify-center p-3 sm:p-4">
       <Card className="w-full max-w-md sm:max-w-2xl bg-gradient-to-br from-[#FFB84D] to-[#F5A623] p-6 sm:p-8 md:p-12 rounded-3xl sm:rounded-[2.5rem] shadow-2xl border-none">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-6 sm:mb-8 md:mb-12 leading-tight">
           Выберите сумму и срок
